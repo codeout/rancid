@@ -285,6 +285,8 @@ sub ShowSwitch {
 	    next;
 	/^power supply: (.*)/i &&
 		ProcessHistory("COMMENTS","keysort","C0","#$1") && next;
+	/^system type:/i &&
+		ProcessHistory("COMMENTS","keysort","C1","#$_") && next;
 	/^license/i && ProcessHistory("COMMENTS","keysort","D0","#Image: $_")
 		&& next;
 	s/^software image (\S+):/Image: $1:/i &&
@@ -412,6 +414,22 @@ sub WriteTerm {
     return(0);
 }
 
+# This routine parses "show policy detail"
+sub ShowPolicy {
+    print STDERR "    In ShowPolicy: $_" if ($debug);
+
+    ProcessHistory("","","","\n#\n# Policies (NOTE: lines below to be splitted into .po files)\n#\n");
+
+    while (<INPUT>) {
+	tr/\015//d;
+	last if(/^$prompt/);
+	next if(/^(\s*|\s*$cmd\s*)$/);
+
+	ProcessHistory("COMMENTS","keysort","H0","$_")
+    }
+    return(0);
+}
+
 # dummy function
 sub DoNothing {print STDOUT;}
 
@@ -423,7 +441,8 @@ sub DoNothing {print STDOUT;}
 	{'show switch'			=> 'ShowSwitch'},
 	{'show slot'			=> 'ShowSlot'},
 	{'show configuration detail'	=> 'WriteTerm'},
-	{'show configuration'		=> 'WriteTerm'},
+#	{'show configuration'		=> 'WriteTerm'},
+	{'show policy detail'		=> 'ShowPolicy'},
 );
 # Use an array to preserve the order of the commands and a hash for mapping
 # commands to the subroutine and track commands that have been completed.
@@ -495,7 +514,7 @@ TOP: while(<INPUT>) {
     # note: this match sucks rocks, but currently the extreme bits are
     # unreliable about echoing the 'exit\n' command.  this match might really
     # be a bad idea, but instead rely upon WriteTerm's found_end?
-    if (/$prompt\s?(quit|exit|Connection( to \S+)? closed)/ && $found_end) {
+    if (/$prompt\s?(quit|exit|Connection( to \S+)? closed)|Connection( to \S+)? closed/ && $found_end) {
 	$clean_run = 1;
 	last;
     }

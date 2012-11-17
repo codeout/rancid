@@ -64,7 +64,11 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/rrancid.in $(srcdir)/srancid.in $(srcdir)/tlogin.in \
 	$(srcdir)/tntlogin.in $(srcdir)/tntrancid.in \
 	$(srcdir)/trancid.in $(srcdir)/xrancid.in \
-	$(srcdir)/xrrancid.in $(srcdir)/zrancid.in
+	$(srcdir)/xrrancid.in $(srcdir)/zrancid.in \
+	$(srcdir)/aprancid.in \
+	$(srcdir)/ewlogin.in $(srcdir)/ewrancid.in \
+	$(srcdir)/oglogin.in $(srcdir)/ograncid.in \
+	$(srcdir)/qlogin.in $(srcdir)/qrancid.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.in
@@ -79,7 +83,8 @@ CONFIG_CLEAN_FILES = control_rancid par rancid-fe agmrancid alogin \
 	htrancid jlogin jrancid jerancid mrancid mrvlogin mrvrancid \
 	mtrancid mtlogin nlogin nrancid nslogin nsrancid nxrancid \
 	prancid rivlogin rivrancid rrancid srancid tlogin tntlogin \
-	tntrancid trancid xrancid xrrancid zrancid
+	tntrancid trancid xrancid xrrancid zrancid \
+	aprancid ewlogin ewrancid oglogin ograncid qlogin qrancid
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -253,7 +258,8 @@ bin_SCRIPTS = agmrancid alogin arancid arrancid avologin avorancid \
 	nrancid nslogin nsrancid nxrancid par prancid rancid-fe rancid \
 	rivlogin rivrancid rrancid srancid tlogin tntlogin tntrancid \
 	trancid xrancid xrrancid zrancid lg.cgi lgform.cgi rancid-cvs \
-	rancid-run
+	rancid-run \
+	aprancid ewlogin ewrancid oglogin ograncid qlogin qrancid
 EXTRA_DIST = lg.cgi.in lgform.cgi.in rancid-cvs.in rancid-run.in
 #dist_bin_SCRIPTS= $(bin_SCRIPTS:%=%.in)
 CLEANFILES = lg.cgi lgform.cgi rancid-cvs rancid-run
@@ -426,6 +432,20 @@ xrancid: $(top_builddir)/config.status $(srcdir)/xrancid.in
 xrrancid: $(top_builddir)/config.status $(srcdir)/xrrancid.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 zrancid: $(top_builddir)/config.status $(srcdir)/zrancid.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+aprancid: $(top_builddir)/config.status $(srcdir)/aprancid.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ewlogin: $(top_builddir)/config.status $(srcdir)/ewlogin.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ewrancid: $(top_builddir)/config.status $(srcdir)/ewrancid.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+oglogin: $(top_builddir)/config.status $(srcdir)/oglogin.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ograncid: $(top_builddir)/config.status $(srcdir)/ograncid.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+qlogin: $(top_builddir)/config.status $(srcdir)/qlogin.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+qrancid: $(top_builddir)/config.status $(srcdir)/qrancid.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)

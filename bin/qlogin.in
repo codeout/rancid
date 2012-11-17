@@ -1,6 +1,6 @@
 #! @EXPECT_PATH@ --
 ##
-## $Id: clogin.in 2376 2012-01-31 22:42:14Z heas $
+## qlogin.in
 ##
 ## @PACKAGE@ @VERSION@
 ## Copyright (c) @COPYYEARS@ by Terrapin Communications, Inc.
@@ -42,9 +42,9 @@
 # 
 #  The expect login scripts were based on Erik Sherk's gwtn, by permission.
 # 
-# clogin - Cisco login
+# qlogin - Quagga login
 #
-# Most options are intuitive for logging into a Cisco router.
+# Most options are intuitive for logging into a Quagga router including a Quagga Ex.
 # The default is to enable (thus -noenable).  Some folks have
 # setup tacacs to have a user login at priv-lvl = 15 (enabled)
 # so the -autoenable flag was added for this case (don't go through
@@ -642,6 +642,13 @@ proc run_commands { prompt command } {
     for {set i 0} {$i < $num_commands} { incr i} {
 	send -- "[subst -nocommands [lindex $commands $i]]\r"
 	expect {
+	    -re "\[\r\n]+~"	{
+						  regsub -all {~} $expect_out(buffer) {} junk
+						  send_user -- "$junk"
+						  #send_user -- "$expect_out(buffer)"
+						  exp_continue
+						}
+	    -re "\b\b  \b\b"	{ exp_continue }
 	    -re "\b+"				{ exp_continue }
 	    -re "^\[^\n\r *]*$reprompt"		{ send_user -- "$expect_out(buffer)"
 						}

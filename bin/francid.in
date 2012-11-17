@@ -278,6 +278,23 @@ sub ShowModule {
     return(0);
 }
 
+# This routine parses "show media"
+sub ShowOptic {
+    print STDERR "    In ShowOptic: $_" if ($debug);
+
+    while (<INPUT>) {
+	tr/\015//d;
+	last if (/^$prompt/);
+	return(1) if (/Invalid input (->|detected)/);
+	return(1) if (/^\s+\^$/);		# edgeiron invalid command
+	next if (/^\s*$/);
+
+	ProcessHistory("OPTIC","","","!Optic: $_");
+    }
+    ProcessHistory("","","","!\n");
+    return(0);
+}
+
 # This routine processes a "write term"
 sub WriteTerm {
     print STDERR "    In WriteTerm: $_" if ($debug);
@@ -418,8 +435,9 @@ sub DoNothing {print STDOUT;}
 	{'show version'		=> 'ShowVersion'},
 	{'show chassis'		=> 'ShowChassis'},
 	{'show module'		=> 'ShowModule'},
+	{'show media'		=> 'ShowOptic'},
 	{'show flash'		=> 'ShowFlash'},
-	{'write term'		=> 'WriteTerm'},
+#	{'write term'		=> 'WriteTerm'},
 	{'show running-config'	=> 'WriteTerm'},
 );
 # Use an array to preserve the order of the commands and a hash for mapping

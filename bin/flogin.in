@@ -84,7 +84,7 @@ set do_saveconfig 0
 # Sometimes routers take awhile to answer (the default is 10 sec)
 set timeoutdflt 45
 #
-set send_human {.4 .4 .7 .3 5}
+set send_human {0 0 .7 0 0}
 
 # Find the user in the ENV, or use the unix userid.
 if {[ info exists env(CISCO_USER) ]} {

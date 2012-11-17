@@ -661,6 +661,7 @@ sub ShowBoot {
 	tr/\015//d;
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if (/^\s*\^\s*$/);
 	return(1) if (/Line has invalid autocommand /);
 	return(1) if (/(Invalid (input|command) detected|Type help or )/i);
@@ -701,6 +702,7 @@ sub ShowFlash {
 	tr/\015//d;
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if ($type =~ /^(12[40]|7)/);
 	return(1) if ($ios eq "XE");
 	return(1) if (/^\s*\^\s*$/);
@@ -914,6 +916,7 @@ sub ShowDebug {
 	tr/\015//d;
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if (/Line has invalid autocommand /);
 	return(1) if (/(Invalid (input|command) detected|Type help or )/i);
 	return(-1) if (/command authorization failed/i);
@@ -1337,6 +1340,7 @@ sub ShowInventory {
 	return if (/^\s*\^$/);
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if (/Line has invalid autocommand /);
 	return(1) if (/(Invalid (input|command) detected|Type help or )/i);
 	return(-1) if (/command authorization failed/i);
@@ -1537,6 +1541,7 @@ sub ShowVTP {
 	tr/\015//d;
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if /^\s*\^\s*$/;
 	return(1) if (/Line has invalid autocommand /);
 	return(1) if (/(Invalid (input|command) detected|Type help or )/i);
@@ -1568,6 +1573,7 @@ sub ShowVLAN {
 	tr/\015//d;
 	last if (/^$prompt/);
 	next if (/^(\s*|\s*$cmd\s*)$/);
+	next if (/^(Load for|Time source)/);
 	return(1) if /^\s*\^\s*$/;
 	return(1) if (/Line has invalid autocommand /);
 	return(1) if (/(Invalid (input|command) detected|Type help or )/i);
@@ -2039,7 +2045,7 @@ sub DoNothing {print STDOUT;}
 	{'show running-config view full'=> 'WriteTerm'},	# workaround for
 								# role-based CLI
 	{'show running-config'		=> 'WriteTerm'},
-	{'write term'			=> 'WriteTerm'},
+#	{'write term'			=> 'WriteTerm'},
 );
 # Use an array to preserve the order of the commands and a hash for mapping
 # commands to the subroutine and track commands that have been completed.

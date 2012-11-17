@@ -1,6 +1,6 @@
 #! @EXPECT_PATH@ --
 ##
-## $Id: clogin.in 2376 2012-01-31 22:42:14Z heas $
+## ewlogin.in
 ##
 ## @PACKAGE@ @VERSION@
 ## Copyright (c) @COPYYEARS@ by Terrapin Communications, Inc.
@@ -42,9 +42,9 @@
 # 
 #  The expect login scripts were based on Erik Sherk's gwtn, by permission.
 # 
-# clogin - Cisco login
+# ewlogin - Hitachi Cable eWave login
 #
-# Most options are intuitive for logging into a Cisco router.
+# Most options are intuitive for logging into a eWave device.
 # The default is to enable (thus -noenable).  Some folks have
 # setup tacacs to have a user login at priv-lvl = 15 (enabled)
 # so the -autoenable flag was added for this case (don't go through
@@ -68,7 +68,7 @@ set password_file $env(HOME)/.cloginrc
 set do_command 0
 set do_script 0
 # The default is to automatically enable
-set avenable 1
+set avenable 0
 # The default is that you login non-enabled (tacacs can have you login already
 # enabled)
 set avautoenable 0
@@ -146,7 +146,7 @@ for {set i 0} {$i < $argc} {incr i} {
 	} -w* {
 	    if {! [regexp .\[wW\](.+) $arg ignore enauser]} {
 		incr i
-		set enausername [lindex $argv $i]
+		set enausername [ lindex $argv $i ]
 	    }
 	# Environment variable to pass to -s scripts
 	} -E* {
@@ -627,6 +627,10 @@ proc run_commands { prompt command } {
 	# match cisco config mode prompts too, such as router(config-if)#,
 	# but catalyst does not change in this fashion.
 	regsub -all {^(.{1,11}).*([#>])$} $prompt {\1([^#>\r\n]+)?[#>](\\([^)\\r\\n]+\\))?} reprompt
+	expect {
+	    -re $reprompt	{}
+	    -re "\[\n\r]+"	{ exp_continue }
+	}
     } else {
 	set reprompt $prompt
     }
@@ -637,8 +641,8 @@ proc run_commands { prompt command } {
     set commands [split $command \;]
     set num_commands [llength $commands]
     # the pager can not be turned off on the PIX, so we have to look
-    # for the "More" prompt.  the extreme is equally obnoxious in pre-12.3 XOS,
-    # with a global switch in the config.
+    # for the "More" prompt.  the extreme is equally obnoxious, with a
+    # global switch in the config.
     for {set i 0} {$i < $num_commands} { incr i} {
 	send -- "[subst -nocommands [lindex $commands $i]]\r"
 	expect {
@@ -805,13 +809,13 @@ foreach router [lrange $argv $i end] {
     # Figure out prompts
     set u_prompt [find userprompt $router]
     if { "$u_prompt" == "" } {
-	set u_prompt "(Username|Login|login|user name|User):"
+	set u_prompt "(Username|Login|login|user name|User) :"
     } else {
 	set u_prompt [join [lindex $u_prompt 0] ""]
     }
     set p_prompt [find passprompt $router]
     if { "$p_prompt" == "" } {
-	set p_prompt "(\[Pp]assword|passwd|Enter password for \[^ :]+):"
+	set p_prompt "(\[Pp]assword|passwd|Enter password for \[^ :]+) :"
     } else {
 	set p_prompt [join [lindex $p_prompt 0] ""]
     }

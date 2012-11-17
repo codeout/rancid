@@ -1,6 +1,6 @@
 #! @EXPECT_PATH@ --
 ##
-## $Id: clogin.in 2376 2012-01-31 22:42:14Z heas $
+## oglogin.in
 ##
 ## @PACKAGE@ @VERSION@
 ## Copyright (c) @COPYYEARS@ by Terrapin Communications, Inc.
@@ -42,7 +42,7 @@
 # 
 #  The expect login scripts were based on Erik Sherk's gwtn, by permission.
 # 
-# clogin - Cisco login
+# oglogin - Opengear login
 #
 # Most options are intuitive for logging into a Cisco router.
 # The default is to enable (thus -noenable).  Some folks have
@@ -67,15 +67,14 @@ set password_file $env(HOME)/.cloginrc
 # Default is to login to the router
 set do_command 0
 set do_script 0
-# The default is to automatically enable
-set avenable 1
+set avenable 0
 # The default is that you login non-enabled (tacacs can have you login already
 # enabled)
 set avautoenable 0
 # The default is to look in the password file to find the passwords.  This
 # tracks if we receive them on the command line.
 set do_passwd 1
-set do_enapasswd 1
+set do_enapasswd 0
 # Save config, if prompted
 set do_saveconfig 0
 # Sometimes routers take awhile to answer (the default is 10 sec)
@@ -624,9 +623,8 @@ proc run_commands { prompt command } {
     # skip if its an extreme (since the pager can not be disabled on a
     # per-vty basis).
     if { [string compare "extreme" "$platform"] } {
-	# match cisco config mode prompts too, such as router(config-if)#,
-	# but catalyst does not change in this fashion.
-	regsub -all {^(.{1,11}).*([#>])$} $prompt {\1([^#>\r\n]+)?[#>](\\([^)\\r\\n]+\\))?} reprompt
+	regsub -all {\$} $prompt {\\$} reprompt
+
     } else {
 	set reprompt $prompt
     }
@@ -637,10 +635,10 @@ proc run_commands { prompt command } {
     set commands [split $command \;]
     set num_commands [llength $commands]
     # the pager can not be turned off on the PIX, so we have to look
-    # for the "More" prompt.  the extreme is equally obnoxious in pre-12.3 XOS,
-    # with a global switch in the config.
+    # for the "More" prompt.  the extreme is equally obnoxious, with a
+    # global switch in the config.
     for {set i 0} {$i < $num_commands} { incr i} {
-	send -- "[subst -nocommands [lindex $commands $i]]\r"
+	send -- "[subst -nocommands [lindex $commands $i]]\r\r"
 	expect {
 	    -re "\b+"				{ exp_continue }
 	    -re "^\[^\n\r *]*$reprompt"		{ send_user -- "$expect_out(buffer)"
@@ -680,13 +678,6 @@ proc run_commands { prompt command } {
 	send -h "quit\r"
     }
     expect {
-	-re "^\[^\n\r *]*$reprompt"		{
-						  # the Cisco CE and Jnx ERX
-						  # return to non-enabled mode
-						  # on exit in enabled mode.
-						  send -h "exit\r"
-						  exp_continue;
-						}
 	"The system has unsaved changes"	{ # Force10 SFTOS
 						  if {$do_saveconfig} {
 						    catch {send "y\r"}
@@ -750,7 +741,7 @@ foreach router [lrange $argv $i end] {
     }
 
     # Default prompt.
-    set prompt "(>|#| \\(enable\\))"
+    set prompt "\\$"
 
     # look for noenable option in .cloginrc
     if { [find noenable $router] == "1" } {
@@ -896,7 +887,7 @@ foreach router [lrange $argv $i end] {
 				  set prompt ".? ?$junk\[0-9]+ $expect_out(2,string)";
 				  set platform "extreme"
 				}
-	-re "^.+$prompt"	{ set junk $expect_out(0,string);
+	-re "^.*$prompt"	{ set junk $expect_out(0,string);
 				  regsub -all "\[\]\[\(\)]" $junk {\\&} prompt;
 				}
     }
