@@ -901,6 +901,8 @@ foreach router [lrange $argv $i end] {
 		send "set width 132\r"
 		expect -re $prompt	{}
 		send "set logging session disable\r"
+	    } elseif { 1 } {
+		# hack to skip terminal tweaks
 	    } else {
 		send "terminal length 0\r"
 		expect -re $prompt  	{}
