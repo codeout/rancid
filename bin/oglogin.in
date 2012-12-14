@@ -642,6 +642,8 @@ proc run_commands { prompt command } {
 	expect {
 	    -re "\b+"				{ exp_continue }
 	    -re "^\[^\n\r *]*$reprompt"		{ send_user -- "$expect_out(buffer)"
+				  # sleep briefly to allow time for stty -echo
+				  sleep .3
 						}
 	    -re "^\[^\n\r]*$reprompt."		{ send_user -- "$expect_out(buffer)"
 						  exp_continue
